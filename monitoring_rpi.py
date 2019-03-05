@@ -1,22 +1,24 @@
 import time
-
+import hashlib
 import commands
 import os
 import requests
 
 # GitHub API settings
 API_URL = 'https://api.github.com'
-REPO_URL = API_URL + '/repos/bdeinsalyon/dashboard_client'
+REPO_URL = API_URL + '/repos/bdeinsalyon/AD-monitoring-client'
 LATEST_RELEASE = '/releases/latest'
 COMMIT_PATH = '/commits'
 TAG_PATH = '/git/refs/tags/'
 HEADERS = {'Accept': 'application/vnd.github.cryptographer-preview+json'}
 
 SCRIPT_NAME = os.path.basename(__file__)
-UPDATE_FILE = 'updated.py'
+SCRIPT_FILE = os.path.abspath(__file__)
+UPDATE_FILE = '/tmp/updated.py'
+
 
 token = commands.getoutput('md5sum /etc/machine-id | awk \'{print $1;}\'').strip()
-control_mode = "lg-serial"
+control_mode = "none"
 if control_mode == "lg-serial":
     import serial
 elif control_mode == "cec":
@@ -42,6 +44,57 @@ def send(jsonData):
         e
         return 3
 
+def update():
+    r = requests.get(REPO_URL + COMMIT_PATH, headers=HEADERS)
+    json = r.json()
+    if 'message' in json:
+        print(json)
+        return "Json"
+    commit = json[0]
+    verified = commit.get('commit').get('verification').get('verified')
+    sha = commit.get('sha')
+    if not verified:
+        return "Pas verifie"
+    r = requests.get(REPO_URL + COMMIT_PATH + '/' + sha, headers=HEADERS)
+    files = r.json().get('files')
+    url = None
+    for f in files:
+        if f.get('filename') == SCRIPT_NAME:
+            url = f.get('raw_url')
+    if url is None:
+        return "Pas d'url"
+    r = requests.get(url)
+
+    # If we don't get a successful request, don't update with the returned content.
+    if r.status_code not in [200, 301, 302]:
+        return "Mauvais status code"
+
+    if r.text.startswith('<html><body><h1>503'):
+        return "Erreur 503"
+
+    with open(UPDATE_FILE, 'w') as f:
+        f.write(r.text)
+    with open(UPDATE_FILE, 'rb') as f1:
+        with open(SCRIPT_FILE, 'rb') as f2:
+            h1 = hashlib.sha256(f1.read()).hexdigest()
+            h2 = hashlib.sha256(f2.read()).hexdigest()
+
+    restart_needed = h1 != h2
+    print('restart_needed', restart_needed)
+    if restart_needed:
+        os.system("sudo mount -o remount,rw /")
+        os.remove(SCRIPT_FILE)
+        os.system("/bin/cp " + UPDATE_FILE + " " + SCRIPT_FILE)
+        print("Reboot dans 10 sec")
+        time.sleep(10)
+        os.system("/sbin/reboot")
+    else:
+        print("Restart non necessaire")
+        os.remove(UPDATE_FILE)
+
+
+
+print(update())
 if control_mode == "cec":
     # On initialise le CEC
     cec.init()
