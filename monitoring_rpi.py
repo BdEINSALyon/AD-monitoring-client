@@ -51,10 +51,7 @@ def update():
         print(json)
         return "Json"
     commit = json[0]
-    verified = commit.get('commit').get('verification').get('verified')
     sha = commit.get('sha')
-    if not verified:
-        return "Pas verifie"
     r = requests.get(REPO_URL + COMMIT_PATH + '/' + sha, headers=HEADERS)
     files = r.json().get('files')
     url = None
