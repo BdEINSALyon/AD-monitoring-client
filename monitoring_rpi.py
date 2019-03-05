@@ -49,7 +49,7 @@ def update():
     json = r.json()
     if 'message' in json:
         print(json)
-        return "Json"
+        return
     commit = json[0]
     sha = commit.get('sha')
     r = requests.get(REPO_URL + COMMIT_PATH + '/' + sha, headers=HEADERS)
@@ -59,15 +59,18 @@ def update():
         if f.get('filename') == SCRIPT_NAME:
             url = f.get('raw_url')
     if url is None:
-        return "Pas d'url"
+        print("Pas d'url")
+        return
     r = requests.get(url)
 
     # If we don't get a successful request, don't update with the returned content.
     if r.status_code not in [200, 301, 302]:
-        return "Mauvais status code"
+        print("Mauvais status code")
+        return
 
     if r.text.startswith('<html><body><h1>503'):
-        return "Erreur 503"
+        print("Erreur 503")
+        return
 
     with open(UPDATE_FILE, 'w') as f:
         f.write(r.text)
