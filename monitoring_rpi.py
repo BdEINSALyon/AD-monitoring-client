@@ -19,6 +19,7 @@ UPDATE_FILE = '/tmp/updated.py'
 
 token = commands.getoutput('md5sum /etc/machine-id | awk \'{print $1;}\'').strip()
 control_mode = open("/boot/config_control_mode.txt", "r").read().splitlines()[0]
+domain = open("/boot/config_domain.txt", "r").read().splitlines()[0]
 if control_mode == "lg-serial":
     import serial
 elif control_mode == "cec":
@@ -33,7 +34,7 @@ def getCPUtemperature():
 def send(jsonData):
     try:
         # On envoi les donnees recuperees. En retour le recepteur nous renvoi si la tele doit etre eteinte ou allumee a ce moment.
-        url = "http://affichage-test.bde-insa-lyon.fr/screen_monitoring_endpoint/"
+        url = domain + "/screen_monitoring_endpoint/"
         jsonData["token"] = token
         print(jsonData)
         r = requests.post(url, data=jsonData)
