@@ -18,8 +18,8 @@ UPDATE_FILE = '/tmp/updated.py'
 
 
 token = commands.getoutput('md5sum /etc/machine-id | awk \'{print $1;}\'').strip()
-control_mode = open("/boot/config_control_mode.txt", "r").read().splitlines()[0]
-domain = open("/boot/config_domain.txt", "r").read().splitlines()[0]
+control_mode = commands.getoutput('cat /boot/config_control_mode.txt | awk \'{print $1;}\'').strip()
+domain = commands.getoutput('cat /boot/config_domain.txt | awk \'{print $1;}\'').strip()
 if control_mode == "lg-serial":
     import serial
 elif control_mode == "cec":
