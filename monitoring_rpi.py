@@ -89,9 +89,7 @@ def update():
         print("Restart non necessaire")
         os.remove(UPDATE_FILE)
 
-
-
-print(update())
+update()
 if control_mode == "cec":
     # On initialise le CEC
     cec.init()
