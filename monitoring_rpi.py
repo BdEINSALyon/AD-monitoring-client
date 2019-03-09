@@ -122,18 +122,18 @@ while 1:  # Boucle qui pool toutes les 1 min, on utilise pas cron car la connexi
         print
         etat_tv_serial
         if (etat_tv_serial == "a 01 OK01x"):
-            jsonData["tv_screen_on"] = 1
+            jsonData["tv_screen_on"] = True
             tv_is_on = 1
         else:
-            jsonData["tv_screen_on"] = 0
+            jsonData["tv_screen_on"] = False
             tv_is_on = 0
     elif control_mode == "cec":
         tv_is_on = tv.is_on()
         tv_rasp_active = cec.is_active_source(1)
         if tv_is_on and tv_rasp_active:
-            jsonData["tv_screen_on"] = 1
+            jsonData["tv_screen_on"] = True
         else:
-            jsonData["tv_screen_on"] = 0
+            jsonData["tv_screen_on"] = False
 
     envoi = send(jsonData)
     # On verifie que ce que demande le recepteur est egal a la realite, sinon on execute les commandes pour corriger
