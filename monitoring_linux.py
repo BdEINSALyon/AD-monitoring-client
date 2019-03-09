@@ -162,4 +162,4 @@ while 1:  # Boucle qui pool toutes les 1 min, on utilise pas cron car la connexi
     print
     "End Pooling"
     # On dort 2 min en laissant la connexion CEC active
-    time.sleep(120)
+    time.sleep(121)
