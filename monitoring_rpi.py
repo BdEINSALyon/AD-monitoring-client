@@ -34,7 +34,7 @@ def getCPUtemperature():
 def send(jsonData):
     try:
         # On envoi les donnees recuperees. En retour le recepteur nous renvoi si la tele doit etre eteinte ou allumee a ce moment.
-        url = domain + "/screen_monitoring_endpoint/"
+        url = domain + "/screen/monitoring_endpoint/"
         jsonData["token"] = token
         print(jsonData)
         r = requests.post(url, data=jsonData)
