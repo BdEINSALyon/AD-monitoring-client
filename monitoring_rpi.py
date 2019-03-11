@@ -128,7 +128,7 @@ while 1:  # Boucle qui pool toutes les 1 min, on utilise pas cron car la connexi
     #jsonData["heure"] = round(time.time(), 0)
     load = os.getloadavg()
     jsonData["load"] = str(load[0]) + " " + str(load[1]) + " " + str(load[2])
-    jsonData["tv_screen_on"] = 0
+    jsonData["tv_screen_on"] = False
     jsonData["ip"] = commands.getoutput('hostname -I').strip()
     jsonData["hostname"] = commands.getoutput('hostname').strip()
     # jsonData["fs"] = commands.getoutput('/kiosk/check_fs.sh')
@@ -142,10 +142,10 @@ while 1:  # Boucle qui pool toutes les 1 min, on utilise pas cron car la connexi
         etat_tv_serial
         if (etat_tv_serial == "a 01 OK01x"):
             jsonData["tv_screen_on"] = True
-            tv_is_on = 1
+            tv_is_on = True
         else:
             jsonData["tv_screen_on"] = False
-            tv_is_on = 0
+            tv_is_on = False
     elif control_mode == "cec":
         tv_is_on = tv.is_on()
         tv_rasp_active = cec.is_active_source(1)
