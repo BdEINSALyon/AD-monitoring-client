@@ -44,17 +44,18 @@ def send(jsonData):
 def get_control_mode():
     url = domain + "/screen/monitoring_get_control_mode/" + token
     r = requests.get(url)
+    code = int(r.text)
     if r.status_code not in [200, 301, 302]:
         return
-    if r.text == 1:
+    if code == 1:
         return "None"
-    elif r.text == 2:
+    elif code == 2:
         return "cec"
-    elif r.text == 3:
+    elif code == 3:
         return "cec"
-    elif r.text == 4:
+    elif code == 4:
         return "lg-serial"
-    elif r.text == 5:
+    elif code == 5:
         return "tv-service"
     else:
         return "None"
