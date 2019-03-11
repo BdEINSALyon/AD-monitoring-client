@@ -18,12 +18,7 @@ UPDATE_FILE = '/tmp/updated.py'
 
 
 token = commands.getoutput('md5sum /etc/machine-id | awk \'{print $1;}\'').strip()
-control_mode = commands.getoutput('cat /boot/config_control_mode.txt | awk \'{print $1;}\'').strip()
 domain = commands.getoutput('cat /boot/config_domain.txt | awk \'{print $1;}\'').strip()
-if control_mode == "lg-serial":
-    import serial
-elif control_mode == "cec":
-    import cec
 
 
 def getCPUtemperature():
@@ -44,6 +39,26 @@ def send(jsonData):
         print
         e
         return 3
+
+
+def get_control_mode():
+    url = domain + "/screen/monitoring_get_control_mode/" + token
+    r = requests.get(url)
+    if r.status_code not in [200, 301, 302]:
+        return
+    if r.text == 1:
+        return "None"
+    elif r.text == 2:
+        return "cec"
+    elif r.text == 3:
+        return "cec"
+    elif r.text == 4:
+        return "lg-serial"
+    elif r.text == 5:
+        return "tv-service"
+    else:
+        return "None"
+
 
 def update():
     r = requests.get(REPO_URL + COMMIT_PATH, headers=HEADERS)
@@ -94,7 +109,11 @@ def update():
         os.remove(UPDATE_FILE)
 
 update()
-if control_mode == "cec":
+control_mode = get_control_mode()
+if control_mode == "lg-serial":
+    import serial
+elif control_mode == "cec":
+    import cec
     # On initialise le CEC
     cec.init()
     tv = cec.Device(0)
