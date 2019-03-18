@@ -38,7 +38,7 @@ def send(jsonData):
         print("error request")
         print
         e
-        return 3
+        return 300
 
 
 def get_control_mode():
@@ -195,6 +195,8 @@ while 1:  # Boucle qui pool toutes les 1 min, on utilise pas cron car la connexi
             print
             "J eteinds"
             commands.getoutput('/usr/bin/vcgencmd display_power 0').strip()
+    if int(envoi) == 3 and commands.getoutput('awk \'{print $1}\' /proc/uptime').strip()>1000:
+        commands.getoutput('/sbin/reboot').strip()
 
     print
     "End Pooling"
