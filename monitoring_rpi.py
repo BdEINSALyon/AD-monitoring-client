@@ -154,6 +154,14 @@ while 1:  # Boucle qui pool toutes les 1 min, on utilise pas cron car la connexi
             jsonData["tv_screen_on"] = True
         else:
             jsonData["tv_screen_on"] = False
+    elif control_mode == "tv-service":
+        retour = commands.getoutput('/usr/bin/vcgencmd display_power').strip()
+        if retour == "display_power=1":
+            jsonData["tv_screen_on"] = True
+            tv_is_on = True
+        else:
+            jsonData["tv_screen_on"] = False
+            tv_is_on = False
 
     envoi = send(jsonData)
     # On verifie que ce que demande le recepteur est egal a la realite, sinon on execute les commandes pour corriger
@@ -178,6 +186,16 @@ while 1:  # Boucle qui pool toutes les 1 min, on utilise pas cron car la connexi
             print
             "J eteinds"
             tv.standby()
+    elif control_mode == "tv-service":
+        if int(envoi) == 1 and (not tv_is_on):
+            print
+            "J'allume"
+            commands.getoutput('/usr/bin/vcgencmd display_power 1').strip()
+        elif int(envoi) == 0 and tv_is_on:
+            print
+            "J eteinds"
+            commands.getoutput('/usr/bin/vcgencmd display_power 0').strip()
+
     print
     "End Pooling"
     # On dort 2 min en laissant la connexion CEC active.
