@@ -130,7 +130,7 @@ while 1:  # Boucle qui pool toutes les 1 min, on utilise pas cron car la connexi
     load = os.getloadavg()
     jsonData["load"] = str(load[0]) + " " + str(load[1]) + " " + str(load[2])
     jsonData["tv_screen_on"] = False
-    jsonData["ip"] = commands.getoutput('hostname -I').strip()
+    jsonData["ip"] = commands.getoutput('hostname -I | awk \'{print $1}\'').strip()
     jsonData["hostname"] = commands.getoutput('hostname').strip()
     # jsonData["fs"] = commands.getoutput('/kiosk/check_fs.sh')
     jsonData["fs_ro"] = 1
@@ -195,7 +195,7 @@ while 1:  # Boucle qui pool toutes les 1 min, on utilise pas cron car la connexi
             print
             "J eteinds"
             commands.getoutput('/usr/bin/vcgencmd display_power 0').strip()
-    if int(envoi) == 3 and commands.getoutput('awk \'{print $1}\' /proc/uptime').strip()>1000:
+    if int(envoi) == 3 and int(commands.getoutput('awk \'{print $1}\' /proc/uptime').strip())>1000:
         commands.getoutput('/sbin/reboot').strip()
 
     print
