@@ -195,7 +195,7 @@ while 1:  # Boucle qui pool toutes les 1 min, on utilise pas cron car la connexi
             print
             "J eteinds"
             commands.getoutput('/usr/bin/vcgencmd display_power 0').strip()
-    if int(envoi) == 3 and int(commands.getoutput('awk \'{print $1}\' /proc/uptime').strip())>1000:
+    if int(envoi) == 3 and float(commands.getoutput('awk \'{print $1}\' /proc/uptime').strip())>1000:
         commands.getoutput('/sbin/reboot').strip()
 
     print
