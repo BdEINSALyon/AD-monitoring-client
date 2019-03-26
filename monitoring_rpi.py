@@ -161,6 +161,9 @@ while 1:  # Boucle qui pool toutes les 1 min, on utilise pas cron car la connexi
         else:
             jsonData["tv_screen_on"] = False
             tv_is_on = False
+    elif control_mode == "None":
+        jsonData["tv_screen_on"] = True
+        tv_is_on = True
 
     envoi = send(jsonData)
     # On verifie que ce que demande le recepteur est egal a la realite, sinon on execute les commandes pour corriger
