@@ -22,8 +22,7 @@ domain = commands.getoutput('cat /boot/config_domain.txt | awk \'{print $1;}\'')
 
 
 def getCPUtemperature():
-    res = float(commands.getoutput('cat /sys/class/thermal/thermal_zone0/temp'))
-    return (res / 1000)
+    return float(commands.getoutput('/kiosk/temperature.sh'))
 
 
 def send(jsonData):

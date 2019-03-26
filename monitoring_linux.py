@@ -27,9 +27,7 @@ elif control_mode == "cec":
 
 
 def getCPUtemperature():
-    res1 = float(commands.getoutput('head -n 1 /sys/class/hwmon/hwmon1/temp2_input'))
-    res2 = float(commands.getoutput('head -n 1 /sys/class/hwmon/hwmon1/temp3_input'))
-    return (res1/2000+res2/2000)
+    return float(commands.getoutput('/kiosk/temperature.sh'))
 
 
 def send(jsonData):
