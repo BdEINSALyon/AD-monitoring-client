@@ -46,15 +46,15 @@ def get_control_mode():
     code = int(r.text)
     if r.status_code not in [200, 301, 302]:
         return
-    if code == 1:
+    if code == 0:
         return "None"
+    elif code == 1:
+        return "cec"
     elif code == 2:
         return "cec"
     elif code == 3:
-        return "cec"
-    elif code == 4:
         return "lg-serial"
-    elif code == 5:
+    elif code == 4:
         return "tv-service"
     else:
         return "None"
@@ -131,8 +131,7 @@ while 1:  # Boucle qui pool toutes les 1 min, on utilise pas cron car la connexi
     jsonData["tv_screen_on"] = False
     jsonData["ip"] = commands.getoutput('hostname -I | awk \'{print $1}\'').strip()
     jsonData["hostname"] = commands.getoutput('hostname').strip()
-    # jsonData["fs"] = commands.getoutput('/kiosk/check_fs.sh')
-    jsonData["fs_ro"] = 1
+    jsonData["fs_ro"] = commands.getoutput('mount | sed -n -e "s/^\/dev\/.* on \/ .*(\(r[w|o]\).*/\\1/p"').strip() == 'ro'
     if control_mode == "lg-serial":
         ser = serial.Serial('/dev/ttyUSB0', timeout=4)
         time.sleep(1)
